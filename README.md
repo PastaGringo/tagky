@@ -11,6 +11,10 @@
 
 # Tagky - Pubky Tagging Application
 
+## About
+
+Tagky is a command-line application designed to interact with the Pubky network. It automatically fetches new content and uses a local AI model to generate and apply relevant tags, helping to organize and discover information on the decentralized network.
+
 This project contains a set of command-line interface (CLI) scripts to interact with the Pubky network. It allows authenticating via the Pubky Ring application, fetching messages, and automatically tagging new content using a local AI model.
 
 - **Pubky Website**: [pubky.org](https://pubky.org)
@@ -173,6 +177,10 @@ MIT
 ```
 
 # Tagky - Application de Tagging Pubky
+
+## À propos
+
+Tagky est une application en ligne de commande conçue pour interagir avec le réseau Pubky. Elle récupère automatiquement le nouveau contenu et utilise un modèle d'IA local pour générer et appliquer des tags pertinents, aidant ainsi à organiser et à découvrir des informations sur le réseau décentralisé.
 
 Ce projet contient un ensemble de scripts en ligne de commande (CLI) pour interagir avec le réseau Pubky. Il permet de s'authentifier via l'application Pubky Ring, de récupérer des messages et de taguer automatiquement du nouveau contenu à l'aide d'un modèle d'IA local.
 

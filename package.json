@@ -1,0 +1,56 @@
+{
+  "name": "pubky-auth-react",
+  "version": "1.0.0",
+  "description": "Application React d'authentification pour le protocole Pubky",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "cd pubky-app && npm run dev",
+    "server": "nodemon server.js",
+    "client": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "build:docker": "npm run build && docker build -t pubky-auth-react ."
+  },
+  "keywords": [
+    "pubky",
+    "authentication",
+    "decentralized",
+    "qr-code",
+    "crypto",
+    "react",
+    "websocket"
+  ],
+  "author": "Votre Nom",
+  "license": "MIT",
+  "dependencies": {
+    "@synonymdev/pubky": "^0.5.1",
+    "axios": "^1.10.0",
+    "chalk": "^4.1.2",
+    "figlet": "^1.8.2",
+    "pubky": "^0.0.1",
+    "pubky-app-specs": "^0.3.5",
+    "qrcode-terminal": "^0.12.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/votre-username/pubky-auth-react.git"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "proxy": "http://localhost:3001"
+}

@@ -1,2 +1,3 @@
 # Ignore zip archives
 *.zip
+node_modules/

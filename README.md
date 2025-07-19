@@ -1,4 +1,20 @@
+```
+
+  ████████╗ █████╗  ██████╗ ██╗  ██╗██╗   ██╗
+  ╚══██╔══╝██╔══██╗██╔════╝ ██║ ██╔╝╚██╗ ██╔╝
+     ██║   ███████║╚█████╗  █████╔╝  ╚████╔╝ 
+     ██║   ██╔══██║ ╚═══██╗ ██╔═██╗   ╚██╔╝  
+     ██║   ██║  ██║██████╔╝ ██║  ██╗   ██║   
+     ╚═╝   ╚═╝  ╚═╝╚═════╝  ╚═╝  ╚═╝   ╚═╝   
+
+```
+
 # Tagky - Pubky Tagging Application
+
+This project contains a set of command-line interface (CLI) scripts to interact with the Pubky network. It allows authenticating via the Pubky Ring application, fetching messages, and automatically tagging new content using a local AI model.
+
+- **Pubky Website**: [pubky.org](https://pubky.org)
+- **Pubky GitHub Repository**: [github.com/pubky](https://github.com/pubky)
 
 This project contains a set of command-line interface (CLI) scripts to interact with the Pubky network. It allows authenticating via the Pubky Ring application, fetching messages, and automatically tagging new content using a local AI model.
 
@@ -145,7 +161,23 @@ MIT
 
 ---
 
+```
+
+  ████████╗ █████╗  ██████╗ ██╗  ██╗██╗   ██╗
+  ╚══██╔══╝██╔══██╗██╔════╝ ██║ ██╔╝╚██╗ ██╔╝
+     ██║   ███████║╚█████╗  █████╔╝  ╚████╔╝ 
+     ██║   ██╔══██║ ╚═══██╗ ██╔═██╗   ╚██╔╝  
+     ██║   ██║  ██║██████╔╝ ██║  ██╗   ██║   
+     ╚═╝   ╚═╝  ╚═╝╚═════╝  ╚═╝  ╚═╝   ╚═╝   
+
+```
+
 # Tagky - Application de Tagging Pubky
+
+Ce projet contient un ensemble de scripts en ligne de commande (CLI) pour interagir avec le réseau Pubky. Il permet de s'authentifier via l'application Pubky Ring, de récupérer des messages et de taguer automatiquement du nouveau contenu à l'aide d'un modèle d'IA local.
+
+- **Site web de Pubky**: [pubky.org](https://pubky.org)
+- **Dépôt GitHub de Pubky**: [github.com/pubky](https://github.com/pubky)
 
 Ce projet contient un ensemble de scripts en ligne de commande (CLI) pour interagir avec le réseau Pubky. Il permet de s'authentifier via l'application Pubky Ring, de récupérer des messages et de taguer automatiquement du nouveau contenu à l'aide d'un modèle d'IA local.
 

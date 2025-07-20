@@ -67,6 +67,7 @@ auth.on('login', async (data) => {
                             watchedPubkeys.push(senderPubkey);
                             await saveWatchedPubkeys(watchedPubkeys);
                             console.log(chalk.green(`Enabled tagging for ${senderPubkey}`));
+                            await sendReply(senderPubkey, 'Tagging has been enabled', specs, data.client);
                         }
                     } else if (post.content.includes('/tag off')) {
                         const index = watchedPubkeys.indexOf(senderPubkey);
@@ -74,6 +75,7 @@ auth.on('login', async (data) => {
                             watchedPubkeys.splice(index, 1);
                             await saveWatchedPubkeys(watchedPubkeys);
                             console.log(chalk.yellow(`Disabled tagging for ${senderPubkey}`));
+                            await sendReply(senderPubkey, 'Tagging has been disabled', specs, data.client);
                         }
                     }
                 }
@@ -85,37 +87,42 @@ auth.on('login', async (data) => {
 
     async function checkForNewPosts() {
         const watchedPubkeys = await getWatchedPubkeys();
-        for (const pubkey of watchedPubkeys) {
-            try {
-                const url = `pubky://${pubkey}/pub/pubky.app/posts/`;
-                const response = await data.client.fetch(url);
-                if (!response.ok) continue;
+        if (watchedPubkeys.length > 0) {
+            console.log(chalk.cyan(`Watching for new posts from ${watchedPubkeys.length} user(s)...`));
+            for (const pubkey of watchedPubkeys) {
+                try {
+                    const url = `pubky://${pubkey}/pub/pubky.app/posts/`;
+                    const response = await data.client.fetch(url);
+                    if (!response.ok) continue;
 
-                const postUris = (await response.text()).trim().split('\n').filter(uri => uri);
-                const newUris = postUris.filter(uri => !knownPostUris.has(uri));
+                    const postUris = (await response.text()).trim().split('\n').filter(uri => uri);
+                    const newUris = postUris.filter(uri => !knownPostUris.has(uri));
 
-                if (newUris.length > 0) {
-                    newUris.forEach(uri => knownPostUris.add(uri));
-                    for (const uri of newUris) {
-                        const postResponse = await data.client.fetch(uri);
-                        if (postResponse.ok) {
-                            const post = await postResponse.json();
-                            console.log(chalk.blue('------------------------'));
-                            console.log(chalk.white(`New Post from ${pubkey}:\n`), chalk.whiteBright(JSON.stringify(post, null, 2)));
-                            console.log(chalk.blue('------------------------'));
+                    if (newUris.length > 0) {
+                        newUris.forEach(uri => knownPostUris.add(uri));
+                        for (const uri of newUris) {
+                            const postResponse = await data.client.fetch(uri);
+                            if (postResponse.ok) {
+                                const post = await postResponse.json();
+                                console.log(chalk.blue('------------------------'));
+                                console.log(chalk.white(`New Post from ${pubkey}:\n`), chalk.whiteBright(JSON.stringify(post, null, 2)));
+                                console.log(chalk.blue('------------------------'));
 
-                            if (post.content) {
-                                const tags = await getTagsFromOllama(post.content);
-                                if (tags && tags.length > 0) {
-                                    await applyTags(uri, tags, specs, data.client);
+                                if (post.content) {
+                                    const tags = await getTagsFromOllama(post.content);
+                                    if (tags && tags.length > 0) {
+                                        await applyTags(uri, tags, specs, data.client);
+                                    }
                                 }
                             }
                         }
                     }
+                } catch (error) {
+                    console.error(chalk.red(`Error checking posts for ${pubkey}:`), error.message);
                 }
-            } catch (error) {
-                console.error(chalk.red(`Error checking posts for ${pubkey}:`), error.message);
             }
+        } else {
+            console.log(chalk.gray('No users to watch. Waiting for /tag on commands...'));
         }
     }
 
@@ -124,6 +131,35 @@ auth.on('login', async (data) => {
     await handleCommands();
     await checkForNewPosts();
 });
+
+async function sendReply(recipientPubkey, content, specs, client) {
+    console.log(chalk.blue(`Sending reply to ${recipientPubkey}: "${content}"`));
+    try {
+        // Tagging the recipient in the post to notify them.
+        const postResult = specs.createPost(content, [recipientPubkey]);
+
+        const body = JSON.stringify(postResult.post.toJson());
+        const headers = new Headers();
+        headers.append('Content-Type', 'application/json');
+
+        const response = await client.fetch(postResult.meta.url, {
+            method: 'PUT',
+            body: new TextEncoder().encode(body),
+            headers,
+            credentials: 'include'
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`HTTP error! status: ${response.status}, ${errorText}`);
+        }
+
+        console.log(chalk.green(`✅ Successfully sent reply to: ${recipientPubkey}`));
+
+    } catch (error) {
+        console.error(chalk.red(`❌ Error sending reply to "${recipientPubkey}":`), error.message);
+    }
+}
 
 async function getTagsFromOllama(content) {
     console.log(chalk.blue('\nSending content to Ollama to find tags...'));

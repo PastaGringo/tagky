@@ -1,0 +1,43 @@
+{
+  "name": "tagky-v1-ultra-simple",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Ultra-simple Pubky tagging bot: SQLite + dotenv + native fetch + better-sqlite3",
+  "license": "MIT",
+  "scripts": {
+    "init-db": "node init-queue-db.js",
+    "fetcher": "node fetcher.js",
+    "worker": "node worker.js",
+    "publisher": "node publisher.js",
+    "publisher:loop": "node publisher.js --loop --interval 30000 --quiet",
+    "start": "node start.js",
+    "stop": "node stop.js",
+    "backup": "bash backup.sh",
+    "news": "node news-generator.js",
+    "news:publish": "node news-generator.js --publish",
+    "news:loop": "node news-generator.js --loop --publish",
+    "test:read-post": "node test-read-post.js",
+    "web-monitor": "node web-monitor.js",
+    "monitor": "node monitor-compact.js"
+  },
+  "dependencies": {
+    "@synonymdev/pubky": "^0.5.4",
+    "better-sqlite3": "^9.6.0",
+    "bip39": "^3.1.0",
+    "chalk": "^5.5.0",
+    "dotenv": "^16.4.5",
+    "express": "^5.1.0",
+    "pubky-app-specs": "^0.3.5",
+    "socket.io": "^4.8.1",
+    "ws": "^8.18.3"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "better-sqlite3"
+    ]
+  }
+}

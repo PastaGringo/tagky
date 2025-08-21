@@ -153,6 +153,10 @@ async function handleMentions() {
     const text = await getPostContentFromUri(postUri);
     const cmd = extractCommandFromText(text);
     log.info('mention received', { author_id: authorId, post_uri: postUri, cmd: cmd ?? 'none', preview: (text ?? '').slice(0,120) });
+
+    // Idempotency: mark as processed BEFORE any side effects to avoid duplicate replies on restarts
+    // If a crash happens after this point, we won't reply twice on container restart.
+    markNotificationProcessed(postUri);
     if (cmd === 'on') {
       followUser(authorId);
       log.info('followed', { author_id: authorId });
@@ -164,6 +168,23 @@ async function handleMentions() {
         log.info('user profile tagged with follow tag', { author_id: authorId, tag: TAGKY_FOLLOW_TAG });
       } catch (error) {
         log.warn('failed to tag user profile', { author_id: authorId, tag: TAGKY_FOLLOW_TAG, error: error.message });
+      }
+
+      // Marquer les posts récents comme déjà traités pour ne tagger que les futurs posts
+      try {
+        const recent = await getRecentPostsByAuthor(authorId, 20);
+        let marked = 0;
+        for (const p of recent) {
+          const uri = p?.details?.uri || p?.uri;
+          if (!uri) continue;
+          if (!isNotificationProcessed(uri)) {
+            markNotificationProcessed(uri);
+            marked++;
+          }
+        }
+        log.info('recent posts marked as processed after follow activation', { author_id: authorId, count: marked });
+      } catch (e) {
+        log.warn('failed to mark recent posts after follow activation', { author_id: authorId, error: e?.message || String(e) });
       }
       
       await sendConfirmationReply(postUri, 'on');
@@ -190,7 +211,7 @@ async function handleMentions() {
         await sendGuidanceReply(postUri);
       }
     }
-    // Mark the mention post as processed regardless
+    // Final safety mark (no-op if already set above)
     markNotificationProcessed(postUri);
   }
 }
@@ -206,6 +227,15 @@ async function handleFollowedUsersPosts() {
       if (!postUri) continue;
       if (isNotificationProcessed(postUri)) continue; // idempotent guard
       const content = p?.details?.content ?? p?.content ?? p?.body ?? null;
+      // Skip reposts or posts with empty content: do not enqueue tagging
+      if (!content || String(content).trim().length === 0) {
+        log.info('↩️ skip empty-content post (likely repost)', {
+          author_id: userId,
+          post_uri: postUri
+        });
+        markNotificationProcessed(postUri);
+        continue;
+      }
       log.info('🆕 new post from followed', {
         author_id: userId,
         post_uri: postUri,

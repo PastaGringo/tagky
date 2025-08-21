@@ -213,6 +213,13 @@ async function sendUnfollowExplanation(postUri) {
       try {
         markProcessing(j.id);
         
+        // Skip empty-content posts (e.g., reposts with no text)
+        if (!j.content || String(j.content).trim().length === 0) {
+          log.info('↩️ skip empty-content job (no tagging)', { id: j.id, post_uri: j.post_uri });
+          markIgnored(j.id, 'Empty content - skip tagging');
+          continue;
+        }
+
         // Ajouter le tag "en attente" au post
         try {
           await tagPostWithKeywords(j.post_uri, TAGKY_PENDING_TAG);

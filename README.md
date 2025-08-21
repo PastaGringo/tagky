@@ -1,41 +1,73 @@
 # TagKy (build)
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
+![Node](https://img.shields.io/badge/node-%3E%3D20-brightgreen)
+[![GitHub stars](https://img.shields.io/github/stars/PastaGringo/tagky?style=social)](https://github.com/PastaGringo/tagky)
+[![GitHub issues](https://img.shields.io/github/issues/PastaGringo/tagky)](https://github.com/PastaGringo/tagky/issues)
+[![Last commit](https://img.shields.io/github/last-commit/PastaGringo/tagky)](https://github.com/PastaGringo/tagky/commits/main)
+
 Minimal runnable package for TagKy.
 
+## What is TagKy?
+
+- __Purpose__: TagKy is a bot that automatically tags posts with 1–3 relevant keywords.
+- __Platform__: Publishes tags via the Pubky protocol and `@synonymdev/pubky` client.
+- __LLM__: Uses a local/remote Ollama model (configurable) to extract concise keywords.
+- __Dashboard__: Includes a real‑time web monitor to visualize stats and activity.
+
+### High-level flow
+
+1. __Fetcher__ (`fetcher.js`): listens to notifications/mentions and enqueues jobs in SQLite.
+2. __Worker__ (`worker.js`): calls Ollama to generate 1–3 keywords and updates job state.
+3. __Publisher__ (`publisher.js`): publishes tags to Pubky for the target post/user.
+4. __Web Monitor__ (`web-monitor.js`): live dashboard for stats, errors and recent activity.
+5. __Orchestrator__ (`start.js`): starts and supervises the fetcher/worker/publisher.
+
 ## Overview
+
 - Node.js ES modules.
 - Centralized env loader: `lib/load-env.js`.
 - Local-only env: `./.env.local` (ignored).
 
 ## Setup
-1) Install deps
+
+1. Install deps
 ```bash
 pnpm i   # or: npm i / yarn install
 ```
-
-2) Configure env
+2. Configure env
 ```bash
 cp ../.env.example ./.env.local
 # edit ./.env.local with your keys (PUBLIC_KEY, SEED_PHRASE, ...)
 ```
 
 ## Run
-- Orchestrator (spawns fetcher/worker/publisher):
+
+- Orchestrator (spawns fetcher/worker/publisher)
 ```bash
 node start.js
 ```
-- Web monitor (dashboard):
+- Web monitor (dashboard)
 ```bash
 node web-monitor.js
 ```
 
 ## Scripts
+
 - `fetcher.js`: pulls notifications and enqueues jobs.
 - `worker.js`: generates keywords (LLM) and updates jobs.
 - `publisher.js`: publishes tags via Pubky API.
 - `init-queue-db.js`: initializes SQLite schema (auto-run by start.js when needed).
 
+## Architecture details
+
+- __Database__: local SQLite (`queue.db`) for jobs, tags and metrics.
+- __Env management__: `lib/load-env.js` loads `./.env.local` (preferred) without overriding existing `process.env`.
+- __Tagging rules__: prompt enforces 1–3 keywords, semicolon-separated, spaces replaced by hyphens.
+- __Resilience__: worker/publisher log errors and keep job state for retries/analysis.
+
 ## Environment
+
 Key variables (set in `./.env.local`):
 - `PUBLIC_KEY` (required)
 - `SEED_PHRASE` or `MNEMONIC` (required)

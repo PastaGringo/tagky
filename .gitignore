@@ -1,0 +1,14 @@
+# Environment files
+.env
+.env.local
+
+# Local DB
+queue.db
+
+# OS / tooling noise
+.DS_Store
+
+# Dependencies / bundles (if any)
+node_modules/
+dist/
+build/

@@ -153,6 +153,10 @@ async function handleMentions() {
     const text = await getPostContentFromUri(postUri);
     const cmd = extractCommandFromText(text);
     log.info('mention received', { author_id: authorId, post_uri: postUri, cmd: cmd ?? 'none', preview: (text ?? '').slice(0,120) });
+
+    // Idempotency: mark as processed BEFORE any side effects to avoid duplicate replies on restarts
+    // If a crash happens after this point, we won't reply twice on container restart.
+    markNotificationProcessed(postUri);
     if (cmd === 'on') {
       followUser(authorId);
       log.info('followed', { author_id: authorId });
@@ -190,7 +194,7 @@ async function handleMentions() {
         await sendGuidanceReply(postUri);
       }
     }
-    // Mark the mention post as processed regardless
+    // Final safety mark (no-op if already set above)
     markNotificationProcessed(postUri);
   }
 }

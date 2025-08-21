@@ -169,6 +169,23 @@ async function handleMentions() {
       } catch (error) {
         log.warn('failed to tag user profile', { author_id: authorId, tag: TAGKY_FOLLOW_TAG, error: error.message });
       }
+
+      // Marquer les posts récents comme déjà traités pour ne tagger que les futurs posts
+      try {
+        const recent = await getRecentPostsByAuthor(authorId, 20);
+        let marked = 0;
+        for (const p of recent) {
+          const uri = p?.details?.uri || p?.uri;
+          if (!uri) continue;
+          if (!isNotificationProcessed(uri)) {
+            markNotificationProcessed(uri);
+            marked++;
+          }
+        }
+        log.info('recent posts marked as processed after follow activation', { author_id: authorId, count: marked });
+      } catch (e) {
+        log.warn('failed to mark recent posts after follow activation', { author_id: authorId, error: e?.message || String(e) });
+      }
       
       await sendConfirmationReply(postUri, 'on');
     } else if (cmd === 'off') {

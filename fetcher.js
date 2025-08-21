@@ -210,6 +210,15 @@ async function handleFollowedUsersPosts() {
       if (!postUri) continue;
       if (isNotificationProcessed(postUri)) continue; // idempotent guard
       const content = p?.details?.content ?? p?.content ?? p?.body ?? null;
+      // Skip reposts or posts with empty content: do not enqueue tagging
+      if (!content || String(content).trim().length === 0) {
+        log.info('↩️ skip empty-content post (likely repost)', {
+          author_id: userId,
+          post_uri: postUri
+        });
+        markNotificationProcessed(postUri);
+        continue;
+      }
       log.info('🆕 new post from followed', {
         author_id: userId,
         post_uri: postUri,

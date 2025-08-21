@@ -37,7 +37,7 @@ pnpm i   # or: npm i / yarn install
 ```
 2. Configure env
 ```bash
-cp ../.env.example ./.env.local
+cp ./.env.example ./.env.local
 # edit ./.env.local with your keys (PUBLIC_KEY, SEED_PHRASE, ...)
 ```
 

@@ -8,6 +8,25 @@
 
 Minimal runnable package for TagKy.
 
+## Quick start
+
+```bash
+# 1) Install deps
+pnpm i   # or: npm i / yarn install
+
+# 2) Create local env
+cp ./.env.example ./.env.local
+# then edit ./.env.local (PUBLIC_KEY, SEED_PHRASE, ...)
+
+# 3) Run orchestrator
+node start.js
+
+# 4) Optional: Web monitor (in another terminal)
+node web-monitor.js
+```
+
+Web monitor: http://localhost:${WEB_MONITOR_PORT:-3001}
+
 ## What is TagKy?
 
 - __Purpose__: TagKy is a bot that automatically tags posts with 1–3 relevant keywords.

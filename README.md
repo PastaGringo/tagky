@@ -25,7 +25,7 @@ node start.js
 node web-monitor.js
 ```
 
-Web monitor: http://localhost:${WEB_MONITOR_PORT:-3001}
+Web monitor: [http://localhost:${WEB_MONITOR_PORT:-3001}](http://localhost:3001)
 
 ## What is TagKy?
 
@@ -95,3 +95,12 @@ Key variables (set in `./.env.local`):
 - `WEB_MONITOR_PORT`
 
 Note: Docker usage belongs to the monorepo root; this sub-repo is for the runnable build only.
+
+## Changelog
+
+- 2025-08-21
+  - Add Quick start section.
+  - Docker Compose updated to build directly from GitHub `dev` branch.
+  - Fix: prevent duplicate replies on container restart (idempotency in `fetcher.js`).
+  - Feature: skip tagging for empty-content posts (reposts) in `fetcher.js` and `worker.js`.
+  - Change: after `/tag on`, mark recent posts as processed to only tag future posts.
